@@ -7,6 +7,7 @@ export type IconButtonProps = {
     prefixIcon?:ImageSourcePropType
     suffixIcon?:ImageSourcePropType
     disabled?:boolean
+    showLoader?:boolean
     label:string
     onPress?:(key:string)=>void
 }
@@ -16,6 +17,10 @@ export type LayoutProps = PropsWithChildren<{
     loading:boolean
     error?:string
 }>
+
+export type FilterButtonGroupProps={
+    onPress:(code:string)=>void
+}
 
 export type ListItemProps={
     id:number

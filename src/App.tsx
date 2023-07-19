@@ -18,10 +18,9 @@ import CurrencyListScreen from './screens/CurrencyListScreen';
 import ChartScreen from './screens/ChartScreen';
 
 
-
 const RootStack = createNativeStackNavigator<RootNavigationParamList>() 
 
-function App(): JSX.Element {
+function App(): JSX.Element { 
 
   return (
     <GestureHandlerRootView style={styles.container}>

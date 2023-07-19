@@ -1,4 +1,4 @@
-import { Keyboard, StyleSheet } from 'react-native'
+import { Keyboard, PermissionsAndroid, Platform, StyleSheet } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import Layout from '../components/Layout'
 import Input from '../components/Input'
@@ -7,20 +7,32 @@ import Geolocation from '@react-native-community/geolocation';
 import { RootNavigationParamList } from '../types/navigation.types'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
+Geolocation.setRNConfiguration({skipPermissionRequests:true})
+
 const HomeScreen = ({navigation}:NativeStackScreenProps<RootNavigationParamList,'Home'>) => {
   const [cityInputValue, setCityInputValue] = useState<string | undefined>()
 
   useEffect(() => {
-    new Promise((resolve,reject)=>{
-      Geolocation.getCurrentPosition(resolve,reject)
-    }).then((info:any)=>{
-      return fetch(`http://api.positionstack.com/v1/reverse?access_key=6af37e22ead61a19b5c32396d7acb7b7&query=${info.coords.latitude},${info.coords.longitude}&limit=1`)
-    }).then(res=>res.json()).then(({data})=>{
-      setCityInputValue(data ? data[0]?.region ?? '' : '')
-    }).catch(err=>{
-        console.error(err);
-        setCityInputValue('')
-    })
+    if(Platform.OS == 'android'){
+      PermissionsAndroid.requestMultiple(['android.permission.ACCESS_FINE_LOCATION','android.permission.POST_NOTIFICATIONS']).then(results=>{
+        results['android.permission.ACCESS_FINE_LOCATION'] == 'granted' ? getCurrentUserLocation() : setCityInputValue('')
+      }).catch(console.error)
+    }else{
+      getCurrentUserLocation()
+    }
+
+    async function getCurrentUserLocation() {
+      return new Promise((resolve,reject)=>{
+        Geolocation.getCurrentPosition(resolve,reject)
+      }).then((info:any)=>{
+        return fetch(`http://api.positionstack.com/v1/reverse?access_key=6af37e22ead61a19b5c32396d7acb7b7&query=${info.coords.latitude},${info.coords.longitude}&limit=1`)
+      }).then(res=>res.json()).then(({data})=>{
+        setCityInputValue(data ? data[0]?.region ?? '' : '')
+      }).catch(err=>{
+          console.error(err);
+          setCityInputValue('')
+      })
+    }
   }, [])
 
   const goToCurrencyList = useCallback(() => {

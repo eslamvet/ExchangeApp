@@ -1,10 +1,10 @@
-import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import React, { memo } from 'react'
 import { IconButtonProps } from '../types/component.types'
 import { useTheme } from '@react-navigation/native'
 import TextComponent from './TextComponent'
 
-const IconButton = ({suffixIcon,prefixIcon,label,onPress,customContainerStyle,customLabelStyle,disabled=false}:IconButtonProps) => {
+const IconButton = ({suffixIcon,prefixIcon,label,onPress,customContainerStyle,customLabelStyle,disabled=false,showLoader=false}:IconButtonProps) => {
   const {colors:{border:shadowColor,primary:backgroundColor}} = useTheme()
   
   return (
@@ -12,6 +12,7 @@ const IconButton = ({suffixIcon,prefixIcon,label,onPress,customContainerStyle,cu
         {prefixIcon && <Image source={prefixIcon} resizeMode='cover' />}
         <TextComponent customTextStyle={customLabelStyle}>{label}</TextComponent>
         {suffixIcon && <Image source={suffixIcon} resizeMode='cover' />}
+        {showLoader && <ActivityIndicator size='small' color='white' />}
     </TouchableOpacity>
   )
 }
